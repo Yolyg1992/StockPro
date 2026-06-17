@@ -15,15 +15,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tustockpro.stockpro.viewmodel.StockViewModel
 
+/**
+ * Pantalla 1: Login/Entrada al Sistema
+ *
+ * Funcionalidades:
+ * - Solicita nombre del operario (mínimo 3 caracteres)
+ * - Valida el nombre para habilitar el botón de ingreso
+ * - Navega al catálogo pasando el nombre como argumento
+ */
 @Composable
 fun PantallaLogin(
     navController: NavController,
     viewModel: StockViewModel
 ) {
     val nombreState = remember { mutableStateOf("") }
+
+    // La validación se realiza usando el ViewModel
+    val isNombreValido = viewModel.validarNombre(nombreState.value)
 
     Column(
         modifier = Modifier
@@ -35,30 +47,59 @@ fun PantallaLogin(
             style = MaterialTheme.typography.headlineMedium
         )
         
+        Spacer(modifier = Modifier.height(32.dp))
+
         Text(
             text = "Bienvenido a StockPro",
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineLarge,
+            fontSize = 32.sp
+        )
+
+        Text(
+            text = "Sistema de Gestión de Inventario",
+            style = MaterialTheme.typography.bodyLarge
         )
         
-        Spacer(modifier = Modifier.height(16.dp))
-        
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "Ingrese su nombre de operario",
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
             value = nombreState.value,
             onValueChange = { nombreState.value = it },
             label = { Text("Nombre del operario") },
-            modifier = Modifier.fillMaxWidth()
+            placeholder = { Text("Mínimo 3 caracteres") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
         )
         
-        Spacer(modifier = Modifier.height(16.dp))
-        
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Caracteres ingresados: ${nombreState.value.length}/3",
+            style = MaterialTheme.typography.bodySmall,
+            color = if (isNombreValido)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.error
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
         Button(
             onClick = {
-                // Navegación con nombre del operario
+                // Navegación con el nombre del operario como argumento
                 navController.navigate("catalogo/${nombreState.value}")
             },
-            enabled = nombreState.value.length >= 3
+            enabled = isNombreValido,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ingresar al Sistema")
+            Text("Ingresar al Sistema", fontSize = 16.sp)
         }
     }
 }
