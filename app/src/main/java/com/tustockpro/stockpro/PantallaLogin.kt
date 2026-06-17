@@ -92,7 +92,7 @@ fun PantallaLogin(
     }
 }
 
-// Gráfica visual del logo de inventario
+// Gráfica visual del logo de inventario con estantes coloridos
 @Composable
 fun LogoInventario() {
     Column(
@@ -102,7 +102,10 @@ fun LogoInventario() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Simulación de estantes de inventario
+        Text(text = "📦 INVENTARIO 📦", style = MaterialTheme.typography.labelSmall)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Estantes de inventario
         repeat(3) { row ->
             Row(
                 modifier = Modifier
@@ -113,18 +116,18 @@ fun LogoInventario() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(4) { col ->
+                    val color = when {
+                        row == 0 && col == 1 -> Color(0xFF4CAF50) // Verde
+                        row == 1 && col == 2 -> Color(0xFFF44336) // Rojo
+                        row == 2 && col == 0 -> Color(0xFF2196F3) // Azul
+                        row == 2 && col == 3 -> Color(0xFFFF9800) // Naranja
+                        else -> Color(0xFFFFC107)
+                    }
                     Card(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = when {
-                                row == 0 && col == 1 -> Color(0xFF4CAF50)
-                                row == 1 && col == 2 -> Color(0xFFF44336)
-                                row == 2 && col == 0 -> Color(0xFF2196F3)
-                                else -> Color(0xFFFFC107)
-                            }
-                        )
+                        colors = CardDefaults.cardColors(containerColor = color)
                     ) {}
                 }
             }
