@@ -1,6 +1,7 @@
 ﻿package com.tustockpro.stockpro
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -78,17 +79,15 @@ fun PantallaReporte(
 
         // Métricas
         Row(modifier = Modifier.fillMaxWidth()) {
-            CardMetrica("❌\nCero", productosStockCero.toString(), Color(0xFFFFEBEE))
-            Spacer(modifier = Modifier.width(12.dp))
-            CardMetrica("⚠\nCrítico", productosEnRiesgo.toString(), Color(0xFFFFF9C4))
+            CardMetrica(modifier = Modifier.fillMaxWidth(0.5f).padding(end = 6.dp), titulo = "❌\nCero", valor = productosStockCero.toString(), color = Color(0xFFFFEBEE))
+            CardMetrica(modifier = Modifier.fillMaxWidth().padding(start = 6.dp), titulo = "⚠\nCrítico", valor = productosEnRiesgo.toString(), color = Color(0xFFFFF9C4))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            CardMetrica("📦\nStock", stockTotal.toString(), Color(0xFFC8E6C9))
-            Spacer(modifier = Modifier.width(12.dp))
-            CardMetrica("📊\nTotal", totalProductos.toString(), Color(0xFFBBDEFB))
+            CardMetrica(modifier = Modifier.fillMaxWidth(0.5f).padding(end = 6.dp), titulo = "📦\nStock", valor = stockTotal.toString(), color = Color(0xFFC8E6C9))
+            CardMetrica(modifier = Modifier.fillMaxWidth().padding(start = 6.dp), titulo = "📊\nTotal", valor = totalProductos.toString(), color = Color(0xFFBBDEFB))
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -120,9 +119,8 @@ fun PantallaReporte(
 }
 
 @Composable
-fun CardMetrica(titulo: String, valor: String, color: Color) {
-    Card(modifier = Modifier
-        .weight(1f)
+fun CardMetrica(modifier: Modifier, titulo: String, valor: String, color: Color) {
+    Card(modifier = modifier
         .height(140.dp),
         colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -132,13 +130,13 @@ fun CardMetrica(titulo: String, valor: String, color: Color) {
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+            verticalArrangement = Arrangement.Center
         ) {
             Text(text = titulo, style = MaterialTheme.typography.labelSmall,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center, fontSize = 14.sp)
+                textAlign = TextAlign.Center, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = valor, style = MaterialTheme.typography.headlineSmall,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                textAlign = TextAlign.Center)
         }
     }
 }
