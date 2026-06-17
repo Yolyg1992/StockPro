@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,15 +28,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tustockpro.stockpro.viewmodel.StockViewModel
 
-/**
- * Pantalla 4: Reporte Financiero
- */
+// Pantalla de Reporte Financiero
 @Composable
 fun PantallaReporte(
     navController: NavController,
     viewModel: StockViewModel
 ) {
-    // Obtener métricas del ViewModel
+    // Obtener metricas del ViewModel
     val totalInventario = viewModel.calcularValorTotalInventario()
     val productosStockCero = viewModel.obtenerProductosConStockCero()
     val productosEnRiesgo = viewModel.obtenerCantidadProductosEnRiesgo()
@@ -77,17 +76,17 @@ fun PantallaReporte(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Métricas
+        // Metricas
         Row(modifier = Modifier.fillMaxWidth()) {
-            CardMetrica(modifier = Modifier.fillMaxWidth(0.5f).padding(end = 6.dp), titulo = "❌\nCero", valor = productosStockCero.toString(), color = Color(0xFFFFEBEE))
-            CardMetrica(modifier = Modifier.fillMaxWidth().padding(start = 6.dp), titulo = "⚠\nCrítico", valor = productosEnRiesgo.toString(), color = Color(0xFFFFF9C4))
+            CardMetrica(modifier = Modifier.fillMaxWidth(0.5f).padding(end = 6.dp), titulo = "Cero", valor = productosStockCero.toString(), color = Color(0xFFFFEBEE))
+            CardMetrica(modifier = Modifier.fillMaxWidth().padding(start = 6.dp), titulo = "Critico", valor = productosEnRiesgo.toString(), color = Color(0xFFFFF9C4))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            CardMetrica(modifier = Modifier.fillMaxWidth(0.5f).padding(end = 6.dp), titulo = "📦\nStock", valor = stockTotal.toString(), color = Color(0xFFC8E6C9))
-            CardMetrica(modifier = Modifier.fillMaxWidth().padding(start = 6.dp), titulo = "📊\nTotal", valor = totalProductos.toString(), color = Color(0xFFBBDEFB))
+            CardMetrica(modifier = Modifier.fillMaxWidth(0.5f).padding(end = 6.dp), titulo = "Stock Total", valor = stockTotal.toString(), color = Color(0xFFC8E6C9))
+            CardMetrica(modifier = Modifier.fillMaxWidth().padding(start = 6.dp), titulo = "Total Productos", valor = totalProductos.toString(), color = Color(0xFFBBDEFB))
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -96,7 +95,7 @@ fun PantallaReporte(
         Card(modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "INFORMACIÓN ADICIONAL", style = MaterialTheme.typography.labelLarge)
+                Text(text = "INFORMACION ADICIONAL", style = MaterialTheme.typography.labelLarge)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -110,14 +109,38 @@ fun PantallaReporte(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(onClick = { navController.popBackStack() }, modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)) {
-            Text("← Volver")
+        // Botones: Volver y Salir
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .padding(end = 4.dp)
+            ) {
+                Text("Volver")
+            }
+
+            Button(
+                onClick = {
+                    // Cerrar la aplicacion
+                    android.os.Process.killProcess(android.os.Process.myPid())
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .padding(start = 4.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF44336)
+                )
+            ) {
+                Text("Salir")
+            }
         }
     }
 }
 
+// Componente reutilizable para metricas
 @Composable
 fun CardMetrica(modifier: Modifier, titulo: String, valor: String, color: Color) {
     Card(modifier = modifier
