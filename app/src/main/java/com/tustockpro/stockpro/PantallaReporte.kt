@@ -28,19 +28,13 @@ import com.tustockpro.stockpro.viewmodel.StockViewModel
 
 /**
  * Pantalla 4: Reporte Financiero
- *
- * Funcionalidades:
- * - Calcula y muestra el valor total del inventario (suma de precio × stock)
- * - Muestra el conteo de productos con stock cero
- * - Muestra información adicional derivada del ViewModel
- * - Toda la lógica de negocio está centralizada en el ViewModel
  */
 @Composable
 fun PantallaReporte(
     navController: NavController,
     viewModel: StockViewModel
 ) {
-    // Todos estos valores se calculan en el ViewModel
+    // Obtener métricas del ViewModel
     val totalInventario = viewModel.calcularValorTotalInventario()
     val productosStockCero = viewModel.obtenerProductosConStockCero()
     val productosEnRiesgo = viewModel.obtenerCantidadProductosEnRiesgo()
@@ -54,25 +48,16 @@ fun PantallaReporte(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Text(
-            text = "=== REPORTE FINANCIERO ===",
-            style = MaterialTheme.typography.headlineMedium,
-            fontSize = 24.sp
-        )
+        Text(text = "Reporte Financiero", style = MaterialTheme.typography.headlineMedium, fontSize = 24.sp)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Tarjeta de capital invertido
+        // Capital invertido
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    color = Color(0xFF1976D2),
-                    shape = MaterialTheme.shapes.large
-                ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1976D2)
-            ),
+                .background(color = Color(0xFF1976D2), shape = MaterialTheme.shapes.large),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1976D2)),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
@@ -81,239 +66,79 @@ fun PantallaReporte(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "CAPITAL INVERTIDO TOTAL",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = Color.White,
-                    fontSize = 12.sp
-                )
-
+                Text(text = "CAPITAL INVERTIDO", style = MaterialTheme.typography.labelLarge,
+                    color = Color.White, fontSize = 12.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "$${String.format("%.2f", totalInventario)}",
-                    style = MaterialTheme.typography.displayLarge,
-                    color = Color.White,
-                    fontSize = 48.sp
-                )
+                Text(text = "$${String.format("%.2f", totalInventario)}",
+                    style = MaterialTheme.typography.displayLarge, color = Color.White, fontSize = 48.sp)
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Grid de métricas
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Productos con stock cero
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(140.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFFEBEE)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-                ) {
-                    Text(
-                        text = "❌",
-                        fontSize = 32.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Stock Cero",
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "$productosStockCero",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.Red,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
+        // Métricas
+        Row(modifier = Modifier.fillMaxWidth()) {
+            CardMetrica("❌\nCero", productosStockCero.toString(), Color(0xFFFFEBEE))
             Spacer(modifier = Modifier.width(12.dp))
-
-            // Productos en riesgo crítico
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(140.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFFF9C4)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-                ) {
-                    Text(
-                        text = "⚠",
-                        fontSize = 32.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Stock Crítico",
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "$productosEnRiesgo",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFFF57F17),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            CardMetrica("⚠\nCrítico", productosEnRiesgo.toString(), Color(0xFFFFF9C4))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Total de artículos en inventario
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(140.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFC8E6C9)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-                ) {
-                    Text(
-                        text = "📦",
-                        fontSize = 32.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Stock Total",
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "$stockTotal",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
+        Row(modifier = Modifier.fillMaxWidth()) {
+            CardMetrica("📦\nStock", stockTotal.toString(), Color(0xFFC8E6C9))
             Spacer(modifier = Modifier.width(12.dp))
-
-            // Total de productos
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(140.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFBBDEFB)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
-                ) {
-                    Text(
-                        text = "📊",
-                        fontSize = 32.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Productos",
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "$totalProductos",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            CardMetrica("📊\nTotal", totalProductos.toString(), Color(0xFFBBDEFB))
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Tarjeta informativa
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "INFORMACIÓN ADICIONAL",
-                    style = MaterialTheme.typography.labelLarge
-                )
-
+        // Info adicional
+        Card(modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = "INFORMACIÓN ADICIONAL", style = MaterialTheme.typography.labelLarge)
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
                     Text("Precio Promedio:")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "$${String.format("%.2f", precioPromedio)}",
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Valor Promedio/Artículo:")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "$${String.format("%.2f", if (stockTotal > 0) totalInventario / stockTotal else 0.0)}",
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Text(text = "$${String.format("%.2f", precioPromedio)}",
+                        style = MaterialTheme.typography.titleSmall)
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
-        
-        Button(
-            onClick = {
-                navController.popBackStack()
-            },
+
+        Button(onClick = { navController.popBackStack() }, modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)) {
+            Text("← Volver")
+        }
+    }
+}
+
+@Composable
+fun CardMetrica(titulo: String, valor: String, color: Color) {
+    Card(modifier = Modifier
+        .weight(1f)
+        .height(140.dp),
+        colors = CardDefaults.cardColors(containerColor = color),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
         ) {
-            Text("← Volver al Catálogo")
+            Text(text = titulo, style = MaterialTheme.typography.labelSmall,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = valor, style = MaterialTheme.typography.headlineSmall,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         }
     }
 }

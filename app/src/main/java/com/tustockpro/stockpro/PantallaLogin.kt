@@ -19,51 +19,40 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tustockpro.stockpro.viewmodel.StockViewModel
 
-/**
- * Pantalla 1: Login/Entrada al Sistema
- *
- * Funcionalidades:
- * - Solicita nombre del operario (mínimo 3 caracteres)
- * - Valida el nombre para habilitar el botón de ingreso
- * - Navega al catálogo pasando el nombre como argumento
- */
 @Composable
 fun PantallaLogin(
     navController: NavController,
     viewModel: StockViewModel
 ) {
     val nombreState = remember { mutableStateOf("") }
-
-    // La validación se realiza usando el ViewModel
     val isNombreValido = viewModel.validarNombre(nombreState.value)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "=== PANTALLA LOGIN ===",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        
-        Spacer(modifier = Modifier.height(32.dp))
+        // Logo gráfico de inventario
+        LogoInventario()
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Bienvenido a StockPro",
+            text = "StockPro",
             style = MaterialTheme.typography.headlineLarge,
             fontSize = 32.sp
         )
 
         Text(
-            text = "Sistema de Gestión de Inventario",
+            text = "Gestión de Inventario",
             style = MaterialTheme.typography.bodyLarge
         )
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = "Ingrese su nombre de operario",
+            text = "Ingrese su nombre",
             style = MaterialTheme.typography.bodyLarge
         )
 
@@ -81,7 +70,7 @@ fun PantallaLogin(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Caracteres ingresados: ${nombreState.value.length}/3",
+            text = "${nombreState.value.length}/3 caracteres",
             style = MaterialTheme.typography.bodySmall,
             color = if (isNombreValido)
                 MaterialTheme.colorScheme.primary
@@ -93,13 +82,52 @@ fun PantallaLogin(
 
         Button(
             onClick = {
-                // Navegación con el nombre del operario como argumento
                 navController.navigate("catalogo/${nombreState.value}")
             },
             enabled = isNombreValido,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ingresar al Sistema", fontSize = 16.sp)
+            Text("Ingresar", fontSize = 16.sp)
+        }
+    }
+}
+
+// Gráfica visual del logo de inventario
+@Composable
+fun LogoInventario() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Simulación de estantes de inventario
+        repeat(3) { row ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(24.dp)
+                    .padding(vertical = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(4) { col ->
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = when {
+                                row == 0 && col == 1 -> Color(0xFF4CAF50)
+                                row == 1 && col == 2 -> Color(0xFFF44336)
+                                row == 2 && col == 0 -> Color(0xFF2196F3)
+                                else -> Color(0xFFFFC107)
+                            }
+                        )
+                    ) {}
+                }
+            }
         }
     }
 }

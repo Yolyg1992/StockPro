@@ -35,13 +35,6 @@ import com.tustockpro.stockpro.viewmodel.StockViewModel
 
 /**
  * Pantalla 2: Catálogo de Productos
- *
- * Funcionalidades:
- * - Muestra un catálogo en tarjetas de todos los productos
- * - Filtros "Ver Todo" y "Stock Crítico" (stock < 5)
- * - Stock mostrado en rojo cuando es crítico
- * - Navega a la edición al tocar una tarjeta
- * - Acceso al reporte financiero mediante botón flotante
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,10 +45,8 @@ fun PantallaCatalogo(
 ) {
     val mostrarSoloCritico = remember { mutableStateOf(false) }
     
-    // La lista de productos es reactiva y se actualiza automáticamente
     val productos = viewModel.getProductos()
     
-    // El filtrado se realiza aquí mediante métodos del ViewModel
     val listaFiltrada = if (mostrarSoloCritico.value) {
         viewModel.obtenerProductosEnRiesgo()
     } else {
@@ -67,7 +58,7 @@ fun PantallaCatalogo(
             TopAppBar(
                 title = {
                     Column {
-                        Text("=== CATALOGO ===")
+                        Text("Catálogo de Productos")
                         Text("Operario: $nombreOperario", fontSize = 12.sp)
                     }
                 }
@@ -75,9 +66,7 @@ fun PantallaCatalogo(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    navController.navigate("reporte")
-                },
+                onClick = { navController.navigate("reporte") },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Text("📊", fontSize = 24.sp)
@@ -90,7 +79,6 @@ fun PantallaCatalogo(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Barra de filtros
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +96,7 @@ fun PantallaCatalogo(
                             MaterialTheme.colorScheme.surfaceVariant
                     )
                 ) {
-                    Text("✓ Ver Todo (${productos.size})")
+                    Text("✓ Todo (${productos.size})")
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -125,20 +113,15 @@ fun PantallaCatalogo(
                             MaterialTheme.colorScheme.surfaceVariant
                     )
                 ) {
-                    Text("⚠ Stock Crítico (${viewModel.obtenerCantidadProductosEnRiesgo()})")
+                    Text("⚠ Crítico (${viewModel.obtenerCantidadProductosEnRiesgo()})")
                 }
             }
             
-            // Lista de productos
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(listaFiltrada) { producto ->
                     ProductoCard(
                         producto = producto,
-                        onCardClick = {
-                            navController.navigate("edicion/${producto.id}")
-                        }
+                        onCardClick = { navController.navigate("edicion/${producto.id}") }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -147,10 +130,6 @@ fun PantallaCatalogo(
     }
 }
 
-/**
- * Componente que representa una tarjeta de producto.
- * Muestra información del producto y permite hacer clic para editar.
- */
 @Composable
 fun ProductoCard(
     producto: Producto,
@@ -164,30 +143,25 @@ fun ProductoCard(
             .clickable { onCardClick() },
         colors = CardDefaults.cardColors(
             containerColor = if (esStockCritico)
-                Color(0xFFFFEBEE) // Fondo rojo suave
+                Color(0xFFFFEBEE)
             else
                 MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // ID del producto
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = "ID: ${producto.id}",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline
             )
 
-            // Nombre del producto
             Text(
                 text = producto.nombre,
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 18.sp
             )
 
-            // Descripción
             Text(
                 text = producto.descripcion,
                 style = MaterialTheme.typography.bodySmall,
@@ -196,28 +170,16 @@ fun ProductoCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Precio y Stock
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Precio",
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                    Text(
-                        text = "$${String.format("%.2f", producto.precio)}",
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Text("Precio", style = MaterialTheme.typography.labelSmall)
+                    Text("$${String.format("%.2f", producto.precio)}",
+                        style = MaterialTheme.typography.titleSmall)
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Stock",
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                    Text(
-                        text = "${producto.stockActual}",
+                    Text("Stock", style = MaterialTheme.typography.labelSmall)
+                    Text("${producto.stockActual}",
                         style = MaterialTheme.typography.titleSmall,
                         color = if (esStockCritico) Color.Red else Color.Unspecified,
                         fontSize = 18.sp
@@ -225,11 +187,10 @@ fun ProductoCard(
                 }
             }
 
-            // Indicador de estado crítico
             if (esStockCritico) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "⚠ STOCK CRÍTICO - Toque para editar",
+                    text = "⚠ CRÍTICO",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Red,
                     modifier = Modifier
